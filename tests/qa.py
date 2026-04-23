@@ -507,8 +507,9 @@ async def s_road_glyphs(app, pilot):
     # and 68+80 (high-traffic elbow) are still ╮.
     assert t[84][0] == "╮", f"low-traffic 84 = {t[84][0]!r}"
     assert t[148][0] == "╮", f"high-traffic 148 = {t[148][0]!r}"
-    # Classes differ though: base vs road_busy
-    assert t[76][1] == "road", f"tile 76 class = {t[76][1]!r}"
+    # 4-way intersection got promoted to its own class so it can pop
+    # brighter against straight-road runs.
+    assert t[76][1] == "road_inter", f"tile 76 class = {t[76][1]!r}"
     assert t[148][1] == "road_busy", f"tile 148 class = {t[148][1]!r}"
 
 

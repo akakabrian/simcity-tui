@@ -36,17 +36,19 @@ _RANGES: list[tuple[int, int, str, str]] = [
     (208, 223, "=", "power"),
     (224, 238, "≡", "rail"),
     (239, 239, "─", "road"),
-    # Zones as letters — lowercase for low density, uppercase for high.
-    # Keeps the semantic identity legible at a glance.
-    (240, 265, "r", "resid_low"),
-    (266, 350, "R", "resid_mid"),
-    (351, 422, "R", "resid_hi"),
-    (423, 470, "c", "comm_low"),
-    (470, 550, "C", "comm_mid"),
-    (551, 611, "C", "comm_hi"),
-    (612, 640, "i", "indus_low"),
-    (641, 670, "I", "indus_mid"),
-    (671, 692, "I", "indus_hi"),
+    # Zones render as 2-glyph density patterns (checkerboard) rather than
+    # repeated letters — see _PATTERN below. The glyph we store here is
+    # the fallback used when the pattern lookup fails; in practice every
+    # zone class has a pattern entry.
+    (240, 265, "░", "resid_low"),
+    (266, 350, "▒", "resid_mid"),
+    (351, 422, "▓", "resid_hi"),
+    (423, 470, "▤", "comm_low"),
+    (470, 550, "▥", "comm_mid"),
+    (551, 611, "▩", "comm_hi"),
+    (612, 640, "▒", "indus_low"),
+    (641, 670, "▓", "indus_mid"),
+    (671, 692, "█", "indus_hi"),
     (693, 708, " ", "dirt"),
     (709, 744, "✈", "airport"),    # plane glyph — readable even at 1-cell
     (745, 760, "▣", "plant"),     # coal stack profile
@@ -98,12 +100,52 @@ def _road_class_for_id(tile_id: int) -> str:
     return "road"
 
 
+# 2-glyph density patterns per tile class. render_line picks
+# pattern[(x+tile_y) & 1] so every cell alternates — the result is
+# checkerboard texture instead of "RRRRR" letter spam. Per design-doc
+# Part 6. Terrain also gets subtle variation so large empty regions
+# don't read as flat colour blocks.
+
+# Landmark accents — single-cell Unicode symbols that visually read as
+# emoji-like icons without the double-width alignment problems real
+# emoji have. Sparse (~2% of cells) via a prime-hash so you see an
+# occasional icon as a pleasant interruption, not a repeating texture.
+# Per design-doc Parts 5+6: emoji as signal, not structure.
+_LANDMARK: dict[str, str] = {
+    "resid_hi":  "⌂",   # house glyph
+    "comm_hi":   "◈",   # lozenge — "business district"
+    "indus_hi":  "⚙",   # gear — "factory"
+}
+_LANDMARK_PRIME = 47  # every ~47th eligible cell → one accent
+_PATTERN: dict[str, tuple[str, str]] = {
+    # Residential — scales from sparse dirt-with-huts to dense blocks.
+    "resid_low":  (".", "░"),
+    "resid_mid":  ("░", "▒"),
+    "resid_hi":   ("▒", "▓"),
+    # Commercial — quadrant-filled blocks give a "grid of buildings" feel.
+    "comm_low":   ("▤", "▥"),
+    "comm_mid":   ("▥", "▦"),
+    "comm_hi":    ("▦", "▩"),
+    # Industrial — heavier blocks, read as "factory mass".
+    "indus_low":  ("▒", "▓"),
+    "indus_mid":  ("▓", "█"),
+    "indus_hi":   ("█", "▓"),
+    # Terrain — a light breath of variation.
+    "dirt":       (".", ","),
+    "grass":      (",", "."),
+    "tree":       ("♣", "^"),
+    "forest":     ("^", "♣"),
+}
+
+
 # Specific overrides that the blanket road rule doesn't cover: bridges, road
 # ± power/rail crossovers, power lines, flooding, etc.
 _OVERRIDES: dict[int, tuple[str, str]] = {
     # Bridges — distinct visual from a regular road.
     64: ("═", "bridge"),
     65: ("║", "bridge"),
+    # 4-way intersection — brighter so it pops against straight road runs.
+    76: ("┼", "road_inter"),
     # Road + power crossover (single-direction; road wins visually).
     77: ("┿", "road_pwr"),
     78: ("╪", "road_pwr"),
@@ -155,11 +197,12 @@ COLOR: dict[str, str] = {
     "fire":          "bold rgb(255,140,50)",
     # Infrastructure — mid priority, brightness encodes traffic.
     "road":          "rgb(180,180,120)",
+    "road_inter":    "bold rgb(230,200,120)",   # 4-way intersections pop brighter
     "bridge":        "rgb(200,210,230)",
     "road_busy":     "bold rgb(230,200,120)",
     "road_pwr":      "bold rgb(255,220,80)",
     "road_rail":     "rgb(190,180,150)",
-    "power":         "bold rgb(200,200,80)",
+    "power":         "bold rgb(220,220,100)",   # Part 6 palette
     "rail":          "rgb(170,140,110)",
     # Zones — letter case + brightness carries density.
     "resid_low":     "rgb(80,200,120)",
@@ -199,6 +242,7 @@ BG: dict[str, str] = {
     "fire":          "rgb(60,20,8)",
     # Infrastructure
     "road":          "rgb(22,22,18)",
+    "road_inter":    "rgb(38,30,12)",
     "bridge":        "rgb(15,20,35)",
     "road_busy":     "rgb(38,30,12)",
     "road_pwr":      "rgb(32,28,10)",

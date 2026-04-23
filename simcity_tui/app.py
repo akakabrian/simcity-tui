@@ -423,6 +423,17 @@ class MapView(ScrollView):
                 cycle = glyph_cycle.get(klass)
                 if cycle is not None:
                     glyph = cycle[frame]
+                else:
+                    # Pattern cycling — zones and terrain alternate a pair
+                    # of glyphs by position to avoid "RRRR" letter spam.
+                    pattern = tiles._PATTERN.get(klass)
+                    if pattern is not None:
+                        glyph = pattern[(x + tile_y) & 1]
+                        # Landmark accents — a ~2% sprinkle of iconic
+                        # symbols on high-density zones, per Part 6.
+                        lm = tiles._LANDMARK.get(klass)
+                        if lm is not None and (x * 7 + tile_y * 13) % tiles._LANDMARK_PRIME == 0:
+                            glyph = lm
                 if x == cx and tile_y == cy:
                     style = cursor_now
                 elif frame == 1 and klass in pulse_classes:
