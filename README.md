@@ -34,10 +34,16 @@ sudo apt-get install swig g++ python3-dev python3-venv make
 
 On macOS:
 ```
-brew install swig
-# g++ + python3 headers are part of the Xcode Command Line Tools
+brew install swig python@3.12
+# g++ is in the Xcode Command Line Tools
 xcode-select --install
 ```
+
+> **Why Homebrew Python?** The build uses `python3-config --includes`
+> to locate the Python headers. Apple's bundled `/usr/bin/python3`
+> doesn't ship `python3-config` on PATH, so the Makefile would
+> silently get an empty include path and fail with a less obvious
+> error. `python@3.12` from Homebrew comes with it.
 
 ## First-time setup
 

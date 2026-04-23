@@ -516,11 +516,20 @@ class MapView(ScrollView):
         self.refresh(Region(0, tile_y, WORLD_W, 1))
 
     def watch_cursor_x(self, old: int, new: int) -> None:
+        # Reactive watchers fire on *first access* too, which for a
+        # --headless agent-API read happens before the widget ever
+        # mounts (no App context). Refresh / scroll methods need a live
+        # app; just skip the display update when there's nothing to
+        # display to.
+        if not self.is_mounted:
+            return
         # old and new cursor are on the same y, so one row repaint covers both.
         self._refresh_row(self.cursor_y)
         self.scroll_to_cursor()
 
     def watch_cursor_y(self, old: int, new: int) -> None:
+        if not self.is_mounted:
+            return
         self._refresh_row(old)
         self._refresh_row(new)
         self.scroll_to_cursor()

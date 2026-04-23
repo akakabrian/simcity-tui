@@ -3,6 +3,13 @@ ENGINE := $(VENDOR)/objs/_micropolisengine.so
 SRC    := $(wildcard $(VENDOR)/src/*.cpp)
 PYINC  := $(shell python3-config --includes)
 
+# macOS linker: Python C-API symbols (_Py_NoneStruct, PyArg_ParseTuple, …)
+# aren't available at link time for extension modules; the host Python
+# process provides them at load time. Without -undefined dynamic_lookup,
+# ld64 rejects the build. Linux ld is lenient about undefined symbols in
+# shared libs, so this flag is a no-op there.
+LDFLAGS_EXT := $(if $(filter Darwin,$(shell uname -s)),-undefined dynamic_lookup,)
+
 .PHONY: all bootstrap engine run clean venv test
 
 # One-shot first-time setup for a fresh clone: fetch the Micropolis tree,
@@ -29,7 +36,7 @@ $(ENGINE): $(VENDOR)/swig/micropolisengine.i $(SRC)
 		-o $(VENDOR)/objs/micropolisengine_wrap.cpp \
 		-outdir $(VENDOR)/objs \
 		$(VENDOR)/swig/micropolisengine.i
-	g++ -shared -fPIC -O2 -w $(PYINC) -I$(VENDOR)/src \
+	g++ -shared -fPIC -O2 -w $(PYINC) $(LDFLAGS_EXT) -I$(VENDOR)/src \
 		$(VENDOR)/objs/micropolisengine_wrap.cpp $(SRC) \
 		-o $(ENGINE)
 

@@ -335,6 +335,24 @@ async def s_find_dirt_fallback(app, pilot):
     assert spot is not None, "find_dirt returned None on standard city"
 
 
+async def s_state_snapshot_headless(app, pilot):
+    """Regression for issue #1 on GitHub: state_snapshot must not crash
+    when accessed from --headless mode (no App mount context). Reading
+    a reactive for the first time fires its watcher; the watchers used
+    to call scroll_to_region which needs a live App.
+
+    Here we simulate the headless path: build a fresh SimCityApp (which
+    is NOT mounted) and invoke state_snapshot on it. Must return a dict,
+    not raise NoActiveAppError."""
+    from simcity_tui.app import SimCityApp
+    from simcity_tui.agent_api import state_snapshot
+    fresh = SimCityApp()
+    s = state_snapshot(fresh)
+    assert isinstance(s, dict), type(s)
+    for k in ("year", "population", "cursor", "funds"):
+        assert k in s, f"missing {k}"
+
+
 async def s_anchor_clears_on_tool_change(app, pilot):
     """Selecting a new tool must clear a pending rect-zoning anchor."""
     # Fake an anchor.
@@ -732,6 +750,7 @@ SCENARIOS: list[Scenario] = [
     Scenario("sound_debounce_drops_burst", s_sound_debounce),
     Scenario("find_dirt_fallback_on_developed_city", s_find_dirt_fallback),
     Scenario("tool_change_clears_rect_anchor", s_anchor_clears_on_tool_change),
+    Scenario("state_snapshot_works_headless", s_state_snapshot_headless),
 ]
 
 
