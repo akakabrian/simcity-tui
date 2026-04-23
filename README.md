@@ -66,7 +66,7 @@ Takes 1–3 minutes the first time, seconds on subsequent rebuilds.
 ```
 .venv/bin/python simcity.py           # default city
 .venv/bin/python simcity.py bluebird  # a specific vendor scenario
-.venv/bin/python simcity.py --sound     # enable sound effects
+.venv/bin/python simcity.py --no-sound  # disable sound effects (on by default)
 .venv/bin/python simcity.py --no-music  # disable background chiptune (on by default)
 .venv/bin/python simcity.py --agent     # also start the REST agent API on :8787
 .venv/bin/python simcity.py --headless  # no TUI, just sim + agent API

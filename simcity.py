@@ -17,15 +17,15 @@ def main() -> None:
                    help="port for the agent API (default: 8787)")
     p.add_argument("--headless", action="store_true",
                    help="no TUI, run sim + agent API only (implies --agent)")
-    p.add_argument("--sound", action="store_true",
-                   help="enable subtle sound effects (requires paplay/aplay/afplay)")
+    p.add_argument("--no-sound", action="store_true",
+                   help="disable sound effects (on by default)")
     p.add_argument("--no-music", action="store_true",
                    help="disable the background chiptune loop (on by default)")
     args = p.parse_args()
 
     agent_port = args.agent_port if (args.agent or args.headless) else None
     run(args.city, agent_port=agent_port, headless=args.headless,
-        sound=args.sound, music=not args.no_music)
+        sound=not args.no_sound, music=not args.no_music)
 
 
 if __name__ == "__main__":

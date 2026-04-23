@@ -795,7 +795,11 @@ class SimCityApp(App):
     paused: reactive[bool] = reactive(False)
 
     def __init__(self, city: str = "haight", *, agent_port: int | None = None,
-                 sound: bool = False, music: bool = True) -> None:
+                 sound: bool = False, music: bool = False) -> None:
+        # NB: library defaults are OFF for both sound and music so that
+        # tests (which instantiate SimCityApp() directly) don't spawn
+        # audio subprocesses. The CLI's `run()` below flips both to ON
+        # by default — that's the actual user-facing default.
         super().__init__()
         self._agent_port = agent_port
         self.sounds = SoundBoard(enabled=sound)
@@ -1276,7 +1280,7 @@ class SimCityApp(App):
 
 
 def run(city: str = "haight", *, agent_port: int | None = None,
-        headless: bool = False, sound: bool = False,
+        headless: bool = False, sound: bool = True,
         music: bool = True) -> None:
     if headless:
         # Headless mode: no TUI, just the agent API + sim ticking on an
