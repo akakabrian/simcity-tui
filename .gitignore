@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+.pyright*
+
+# Build artefacts
+**/objs/
+*.so
+*.dylib
+*.dll
+
+# Vendored engine — fetched by `make bootstrap`. 153 MB, large enough that
+# it doesn't belong in the commit history; a fresh clone calls into the
+# canonical SimHacker/micropolis tree and this project's Makefile rebuilds
+# the SWIG module.
+/vendor/
+
+# QA output
+tests/out/*.svg
+tests/out/*.png
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
