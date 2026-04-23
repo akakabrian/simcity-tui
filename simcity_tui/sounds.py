@@ -39,17 +39,18 @@ _VENDOR_SFX_DIR = (
 # If a name doesn't appear below, `_ensure` falls through to the synth
 # tone defined in _SOUND_SPECS.
 _VENDOR_SOUNDS: dict[str, str] = {
-    "click":    "a.wav",             # 0.10 s — short blip for tool select
-    "build":    "oop.wav",           # 0.11 s — place-a-thing bloop
-    "deny":     "boing.wav",         # 0.43 s — classic "nope" bounce
-    "disaster": "explosion-hi.wav",  # authentic 8-bit explosion
+    "click":    "beep.wav",          # 0.11 s — pure beep, not the voice clip
+    "build":    "oop.wav",            # 0.11 s — place-a-thing bloop
+    "bulldoze": "rumble.wav",         # 0.27 s — rumbling-bulldozer engine
+    "deny":     "boing.wav",          # 0.43 s — classic "nope" bounce
+    "disaster": "explosion-hi.wav",   # authentic 8-bit explosion
     # Intentionally NOT mapped → synth fallback kicks in:
-    #   bulldoze — "bulldozer!" voice clip; synth low-tone is cleaner
-    #   chime    — "ignition" engine startup; synth bell is cleaner
+    #   chime — "ignition" engine startup; synth bell is cleaner
     #
-    # Other vendor samples you could enable with one line:
-    # honkhonk-hi/lo, siren, quackquack, whip, rumble, nuclear,
-    # police, airport, seaport, query, monster, ind, ...
+    # Other vendor samples you could wire up with one line:
+    # honkhonk-hi/low/med, siren, skid, woosh, quackquack, whip,
+    # monster, cuckoo, heavytraffic, coal, nuclear, police,
+    # airport, seaport, stadium, query, aaah, uhuh, ...
 }
 
 
