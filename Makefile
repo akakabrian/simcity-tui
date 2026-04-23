@@ -54,5 +54,16 @@ test: venv $(ENGINE)
 	.venv/bin/python -m tests.api_qa
 	.venv/bin/python -m tests.perf
 
+# Fast smoke test for trivial changes — just the sound diagnostic, runs
+# in ~2 seconds. Use when you edited sounds.py or swapped an asset.
+test-sound: venv
+	.venv/bin/python -m tests.sound_test
+
+# Subset of the main QA suite matching a pattern. Usage:
+#   make test-only PAT=sound     # scenarios with "sound" in the name
+#   make test-only PAT=cursor
+test-only: venv $(ENGINE)
+	.venv/bin/python -m tests.qa $(PAT)
+
 clean:
 	rm -rf $(VENDOR)/objs
