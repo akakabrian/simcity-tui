@@ -22,4 +22,4 @@ packages = ["simcity_tui"]
 # `pip install` delivers the game fully self-contained — no separate
 # asset-download step.
 [tool.setuptools.package-data]
-simcity_tui = ["tui.tcss", "assets/music/*.ogg", "assets/music/CREDITS.md"]
+simcity_tui = ["tui.tcss", "assets/music/*.mp3", "assets/music/CREDITS.md"]

@@ -1,13 +1,19 @@
 """Background chiptune music — fire-and-forget subprocess loop.
 
-Plays `simcity_tui/assets/music/<track>.ogg` in an infinite loop via
+Plays `simcity_tui/assets/music/<track>.mp3` in an infinite loop via
 `paplay` / `afplay`. Same design contract as SoundBoard: silent on
 failure (no audio pipeline, no player, SSH session, etc.), explicit
 stop on app exit.
 
+Format note: we bundle MP3 (not OGG) because **macOS `afplay` doesn't
+decode OGG Vorbis** — it's Core Audio only (AAC/MP3/AIFF/WAV). An
+OGG track would exit after a fraction of a second on Mac and the
+`while true` loop would restart it, producing an audible "resetting
+every few seconds" bug. MP3 at 96 kbps is decoded correctly by both
+afplay and paplay and is ~865 KB for a 73-second chiptune loop.
+
 `aplay` is intentionally NOT used — Linux `aplay` is ALSA raw and
-doesn't decode OGG Vorbis; pulling in full WAV would bloat the
-package.
+doesn't decode MP3 either.
 """
 
 from __future__ import annotations
@@ -18,12 +24,12 @@ from pathlib import Path
 
 
 MUSIC_DIR = Path(__file__).resolve().parent / "assets" / "music"
-DEFAULT_TRACK = MUSIC_DIR / "lasso_lady.ogg"
+DEFAULT_TRACK = MUSIC_DIR / "lasso_lady.mp3"
 
 
 def _detect_player() -> list[str] | None:
-    """Pick a player that decodes OGG. paplay (PulseAudio/PipeWire) and
-    afplay (macOS) both do; aplay doesn't."""
+    """Pick a player that decodes MP3. paplay (PulseAudio/PipeWire) and
+    afplay (macOS Core Audio) both do; aplay doesn't."""
     for cmd in (["paplay"], ["afplay"]):
         if shutil.which(cmd[0]):
             return cmd

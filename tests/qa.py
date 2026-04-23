@@ -336,14 +336,19 @@ async def s_find_dirt_fallback(app, pilot):
 
 
 async def s_music_asset(app, pilot):
-    """The bundled chiptune asset must exist, be a real Ogg/Vorbis
-    file, and live where MusicPlayer expects it."""
+    """The bundled chiptune asset must exist, be a real MP3, and live
+    where MusicPlayer expects it. We ship MP3 (not OGG) so macOS's
+    built-in afplay can decode it."""
     from simcity_tui.music import DEFAULT_TRACK
     assert DEFAULT_TRACK.exists(), f"missing music asset: {DEFAULT_TRACK}"
+    assert DEFAULT_TRACK.suffix == ".mp3", (
+        f"music must be MP3 for afplay compatibility, got {DEFAULT_TRACK.suffix}"
+    )
     with open(DEFAULT_TRACK, "rb") as f:
-        header = f.read(4)
-    # OggS magic bytes — https://xiph.org/ogg/doc/framing.html
-    assert header == b"OggS", f"not an Ogg file, got {header!r}"
+        header = f.read(3)
+    # MP3 files start with either ID3v2 tag ("ID3") or an MPEG sync
+    # frame (0xFF 0xFB/F3/F2/E3/E2 etc).
+    assert header == b"ID3" or header[0] == 0xFF, f"not an MP3, got {header!r}"
 
 
 async def s_music_lifecycle(app, pilot):
@@ -786,7 +791,10 @@ SCENARIOS: list[Scenario] = [
 # ---------- driver ----------
 
 async def run_one(scn: Scenario) -> tuple[str, bool, str]:
-    app = SimCityApp()
+    # Library defaults are sound=False music=False; this is belt-and-
+    # suspenders in case a future change flips them. Tests must never
+    # spawn audio subprocesses that outlive the test process.
+    app = SimCityApp(sound=False, music=False)
     try:
         async with app.run_test(size=(180, 60)) as pilot:
             await pilot.pause()  # let on_mount complete
