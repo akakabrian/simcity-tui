@@ -24,7 +24,7 @@ from pathlib import Path
 
 
 MUSIC_DIR = Path(__file__).resolve().parent / "assets" / "music"
-DEFAULT_TRACK = MUSIC_DIR / "lasso_lady.mp3"
+DEFAULT_TRACK = MUSIC_DIR / "ambient_delicate.mp3"
 
 
 def _detect_player() -> list[str] | None:
