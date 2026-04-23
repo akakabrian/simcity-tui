@@ -28,18 +28,28 @@ _VENDOR_SFX_DIR = (
     / "vendor" / "micropolis" / "micropolis-activity" / "res" / "sounds"
 )
 
-# Map our internal sound names to the best-matching vendor WAV file. When
-# the file isn't there we fall through to the synth tone defined below.
+# Map our internal sound names to the best-matching vendor WAV file.
+#
+# Many of Micropolis's original clips are *human voice* recordings, not
+# SFX ("sorry", "bulldozer", "ignition" etc.). They're authentic but
+# jarring — `ignition.wav` is 3s of an engine starting, which was going
+# off every year rollover. We route those three events to our synth
+# fallback and keep only the short, punchy vendor SFX here.
+#
+# If a name doesn't appear below, `_ensure` falls through to the synth
+# tone defined in _SOUND_SPECS.
 _VENDOR_SOUNDS: dict[str, str] = {
-    "build":    "zone.wav",       # placing a zone / building — the signature
-    "click":    "a.wav",          # short blip for tool select
-    "bulldoze": "bulldozer.wav",  # the demolish thunk
-    "deny":     "sorry.wav",      # rejection
-    "chime":    "ignition.wav",   # "here we go" — used on year rollover
-    "disaster": "explosion-hi.wav",
-    # Bonus samples available for future use:
-    # honkhonk-hi/lo, siren, quackquack, whip, boing, rumble, nuclear,
-    # police, airport, seaport, query, monster, ind, oop, ...
+    "click":    "a.wav",             # 0.10 s — short blip for tool select
+    "build":    "oop.wav",           # 0.11 s — place-a-thing bloop
+    "deny":     "boing.wav",         # 0.43 s — classic "nope" bounce
+    "disaster": "explosion-hi.wav",  # authentic 8-bit explosion
+    # Intentionally NOT mapped → synth fallback kicks in:
+    #   bulldoze — "bulldozer!" voice clip; synth low-tone is cleaner
+    #   chime    — "ignition" engine startup; synth bell is cleaner
+    #
+    # Other vendor samples you could enable with one line:
+    # honkhonk-hi/lo, siren, quackquack, whip, rumble, nuclear,
+    # police, airport, seaport, query, monster, ind, ...
 }
 
 
