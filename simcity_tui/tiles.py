@@ -49,18 +49,35 @@ _RANGES: list[tuple[int, int, str, str]] = [
     (612, 640, "▒", "indus_low"),
     (641, 670, "▓", "indus_mid"),
     (671, 692, "█", "indus_hi"),
-    (693, 708, " ", "dirt"),
-    (709, 744, "✈", "airport"),    # plane glyph — readable even at 1-cell
-    (745, 760, "▣", "plant"),     # coal stack profile
-    # 761-764 are Micropolis TINYEXP (transient explosion frames).
-    (761, 764, "*", "fire"),
-    (765, 773, "♨", "fire_st"),   # hot-springs glyph reads as "fire house"
+    (693, 708, "⚓", "harbor"),    # PORTBASE..LASTPORT — seaport
+    (709, 744, "✈", "airport"),    # AIRPORTBASE..~744 — plane glyph
+    (745, 760, "▣", "plant"),     # COALBASE..LASTPOWERPLANT — coal stack
+    (761, 773, "♨", "fire_st"),   # FIRESTBASE(761)..769 + spillover — fire station
     (774, 778, "◉", "police"),    # sighted target — police badge proxy
     (779, 799, "◎", "stadium"),   # ring for the stadium bowl
-    (800, 827, "◎", "stadium"),
-    (828, 916, "☢", "nuclear"),   # the canonical radiation trefoil
-    (917, 948, "⚓", "harbor"),    # anchor for the seaport
-    (949, 1023, "?", "misc"),
+    (800, 810, "◎", "stadium"),   # FULLSTADIUM + animations
+    # Nuclear plant is the 4x4 block NUCLEARBASE(811)..LASTZONE(826) in
+    # micropolis.h. The legacy range 828-916 incorrectly tagged bridges,
+    # radar, fountains, industrial base, explosions, and smoke as
+    # "nuclear" — which is why bulldoze animations briefly showed ☢.
+    (811, 826, "☢", "nuclear"),   # the canonical radiation trefoil
+    (827, 827, "⚡", "fire"),      # LIGHTNINGBOLT (disaster marker)
+    (828, 831, "═", "road"),      # HBRDG — horizontal bridge
+    (832, 839, "✈", "airport"),   # RADAR animation
+    (840, 843, "◌", "park"),      # FOUNTAIN — park fountain animation
+    (844, 851, "█", "indus_hi"),  # INDBASE2 / TELEBASE industrial
+    (852, 859, "▣", "plant"),     # SMOKEBASE industrial smokestack
+    (860, 867, "*", "fire"),      # TINYEXP — small explosion frames
+    (868, 915, "?", "misc"),      # mixed animation/unused tiles
+    (916, 931, "▣", "plant"),     # COALSMOKE1..4 — coal plant chimney anim
+    (932, 947, "◎", "stadium"),   # FOOTBALLGAME1/2 stadium animations
+    (948, 951, "║", "road"),      # VBRDG — vertical bridge
+    (952, 955, "☢", "nuclear"),   # NUKESWIRL — nuclear swirl animation
+    # CHURCH1BASE(956)..CHURCH7LAST(1018) — extended zone churches. They
+    # occupy residential land so they render with the residential palette;
+    # hi-density shading matches their "community landmark" prominence.
+    (956, 1018, "▓", "resid_hi"),
+    (1019, 1023, "?", "misc"),    # truly unused tail
 ]
 
 # Road glyph keyed by "tile offset within a 16-tile block" (i.e. id - 64
@@ -222,6 +239,7 @@ COLOR: dict[str, str] = {
     "stadium":       "bold rgb(240,200,120)",
     "nuclear":       "bold rgb(250,250,120)",
     "harbor":        "bold rgb(180,200,240)",
+    "park":          "bold rgb(100,220,140)",
     "misc":          "rgb(180,180,180)",
 }
 
@@ -267,6 +285,7 @@ BG: dict[str, str] = {
     "stadium":       "rgb(50,35,15)",
     "nuclear":       "rgb(55,50,15)",
     "harbor":        "rgb(20,30,50)",
+    "park":          "rgb(12,32,18)",
     "misc":          "rgb(25,25,25)",
 }
 

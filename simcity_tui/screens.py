@@ -242,11 +242,11 @@ _LEGEND_ENTRIES: list[tuple[str, int]] = [
 
     ("BUILDINGS", -1),
     ("coal power plant",       750),
-    ("nuclear plant",          830),
+    ("nuclear plant",          816),
     ("police station",         775),
-    ("fire station",           770),
+    ("fire station",           765),
     ("stadium",                790),
-    ("seaport",                920),
+    ("seaport",                698),
     ("airport",                720),
 ]
 
