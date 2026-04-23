@@ -751,6 +751,10 @@ SCENARIOS: list[Scenario] = [
     Scenario("find_dirt_fallback_on_developed_city", s_find_dirt_fallback),
     Scenario("tool_change_clears_rect_anchor", s_anchor_clears_on_tool_change),
     Scenario("state_snapshot_works_headless", s_state_snapshot_headless),
+    Scenario("load_screen_does_not_crash_compositor",
+             lambda a, p: _s_modal(a, p, "L", "LoadScreen")),
+    Scenario("advisor_screen_does_not_crash_compositor",
+             lambda a, p: _s_modal(a, p, "A", "AdvisorScreen")),
 ]
 
 

@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "Terminal-native SimCity (Micropolis) front-end"
 requires-python = ">=3.10"
 dependencies = [
-    "textual>=0.80",
+    # Textual 9+ may change the Widget._render() contract in ways we rely
+    # on (see issue #2). Cap at major version until we've re-verified.
+    "textual>=0.80,<10",
     "aiohttp>=3.9",
     "anthropic>=0.34",
 ]

@@ -176,7 +176,7 @@ class AdvisorScreen(ModalScreen):
             yield Static("", id="advisor-body")
 
     def on_mount(self) -> None:
-        self._render(loading=True)
+        self._refresh_body(loading=True)
         # Fire the Claude call on a worker thread so the UI stays live.
         self.run_worker(self._do_consult, thread=True, exclusive=True)
 
@@ -185,9 +185,12 @@ class AdvisorScreen(ModalScreen):
         text = advisor.consult(self.state)
         self._response = text
         # Schedule a render on the main thread.
-        self.app.call_from_thread(self._render, loading=False)
+        self.app.call_from_thread(self._refresh_body, loading=False)
 
-    def _render(self, loading: bool) -> None:
+    # NB: method MUST NOT be named `_render` — that shadows Textual's
+    # Widget._render() hook, causing the compositor to get `None` and
+    # crash with `NoneType has no render_strips`. See issue #2.
+    def _refresh_body(self, loading: bool) -> None:
         t = Text()
         t.append("CITY ADVISOR\n", style="bold #f0c080")
         t.append(f"{'─' * 72}\n\n", style="dim")
@@ -421,7 +424,7 @@ class LoadScreen(ModalScreen):
 
     def on_mount(self) -> None:
         self._build_entries()
-        self._render()
+        self._refresh_body()
 
     def _build_entries(self) -> None:
         self.entries.clear()
@@ -432,7 +435,9 @@ class LoadScreen(ModalScreen):
             for p in sorted(CITIES_DIR.glob("*.cty")):
                 self.entries.append(("scenarios", p.stem, p))
 
-    def _render(self) -> None:
+    # NB: method MUST NOT be named `_render` — that shadows Textual's
+    # Widget._render() hook. See issue #2.
+    def _refresh_body(self) -> None:
         t = Text()
         t.append("LOAD CITY\n", style="bold #f0c080")
         t.append(f"{'─' * 60}\n", style="dim")
@@ -456,12 +461,12 @@ class LoadScreen(ModalScreen):
     def action_next(self) -> None:
         if self.entries:
             self.sel = (self.sel + 1) % len(self.entries)
-            self._render()
+            self._refresh_body()
 
     def action_prev(self) -> None:
         if self.entries:
             self.sel = (self.sel - 1) % len(self.entries)
-            self._render()
+            self._refresh_body()
 
     def action_load_selected(self) -> None:
         if not self.entries:
