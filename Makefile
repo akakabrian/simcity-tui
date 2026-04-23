@@ -24,8 +24,8 @@ vendor/micropolis/.git:
 engine: $(ENGINE)
 
 $(ENGINE): $(VENDOR)/swig/micropolisengine.i $(SRC)
-	cd $(VENDOR) && mkdir -p objs
-	swig -c++ -python -Isrc -Iswig \
+	mkdir -p $(VENDOR)/objs
+	swig -c++ -python -I$(VENDOR)/src -I$(VENDOR)/swig \
 		-o $(VENDOR)/objs/micropolisengine_wrap.cpp \
 		-outdir $(VENDOR)/objs \
 		$(VENDOR)/swig/micropolisengine.i
