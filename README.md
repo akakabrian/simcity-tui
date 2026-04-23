@@ -4,6 +4,10 @@ Terminal-native [SimCity / Micropolis](https://github.com/SimHacker/micropolis),
 with a mouse-and-keyboard TUI (Textual), a REST API for AI agents, and
 real-time Claude-powered advice.
 
+![hero](screenshots/hero.svg)
+
+![gameplay](screenshots/gameplay.svg)
+
 - **Full 120×100 Micropolis simulation** via SWIG Python bindings around
   Don Hopkins' GPLv3 C++ engine
 - **Mouse + keyboard** — click tools, click-drag for roads, left-click +
