@@ -311,6 +311,17 @@ _build()
 TILE_MASK = 0x03FF  # low 10 bits are the tile ID
 
 
+# Zone-family grouping — used by the map renderer to draw a colored
+# perimeter around contiguous blocks of the same family, so a 3×3 zone
+# (or a wider district of adjacent zones) reads as one unified unit
+# rather than a pile of shaded cells.
+ZONE_FAMILY: dict[str, str] = {
+    "resid_low": "resid", "resid_mid": "resid", "resid_hi": "resid",
+    "comm_low":  "comm",  "comm_mid":  "comm",  "comm_hi":  "comm",
+    "indus_low": "indus", "indus_mid": "indus", "indus_hi": "indus",
+}
+
+
 def style_for(klass: str) -> str:
     """Compose fg + bg into a Rich style string."""
     fg = COLOR.get(klass, "rgb(255,0,255)")
