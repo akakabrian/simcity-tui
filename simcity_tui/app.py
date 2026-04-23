@@ -37,6 +37,7 @@ from .screens import (
     overlay_glyph_and_color,
 )
 from .sounds import SoundBoard
+from .music import MusicPlayer
 # micropolisengine is loaded by engine.py; re-import for constants.
 import micropolisengine as me  # pyright: ignore[reportMissingImports]
 
@@ -794,10 +795,11 @@ class SimCityApp(App):
     paused: reactive[bool] = reactive(False)
 
     def __init__(self, city: str = "haight", *, agent_port: int | None = None,
-                 sound: bool = False) -> None:
+                 sound: bool = False, music: bool = True) -> None:
         super().__init__()
         self._agent_port = agent_port
         self.sounds = SoundBoard(enabled=sound)
+        self.music = MusicPlayer(enabled=music)
         self.sim = new_sim(city)
         self.map_view = MapView(self.sim)
         self.status_panel = StatusPanel(self.sim)
@@ -894,6 +896,9 @@ class SimCityApp(App):
         # traffic flow on busy roads. Keeps each frame cheap (~2 ms for 40
         # visible rows) so the game stays snappy.
         self.set_interval(0.5, self.map_view.advance_animation)
+        # Start the chiptune loop (if enabled + supported by the
+        # system audio pipeline). Silent no-op otherwise.
+        self.music.start()
         # Start the agent API on-demand (set via --agent-port CLI flag).
         self._agent_runner = None
         if self._agent_port is not None:
@@ -1271,7 +1276,8 @@ class SimCityApp(App):
 
 
 def run(city: str = "haight", *, agent_port: int | None = None,
-        headless: bool = False, sound: bool = False) -> None:
+        headless: bool = False, sound: bool = False,
+        music: bool = True) -> None:
     if headless:
         # Headless mode: no TUI, just the agent API + sim ticking on an
         # asyncio loop. Useful for letting an AI agent play on its own.
@@ -1301,9 +1307,17 @@ def run(city: str = "haight", *, agent_port: int | None = None,
         except KeyboardInterrupt:
             pass
         return
+    app = SimCityApp(city, agent_port=agent_port, sound=sound, music=music)
     try:
-        SimCityApp(city, agent_port=agent_port, sound=sound).run()
+        app.run()
     finally:
+        # Always stop the music loop subprocess on exit, even if the
+        # Textual app crashed — otherwise aplay keeps going in the
+        # background after the terminal returns.
+        try:
+            app.music.stop()
+        except Exception:
+            pass
         # Belt-and-suspenders: some terminals (esp. over SSH) keep mouse
         # tracking on after Textual exits, leaking sequences like
         # "35;92;24M…" into the shell. Force-disable all mouse modes and

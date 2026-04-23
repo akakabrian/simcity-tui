@@ -335,6 +335,29 @@ async def s_find_dirt_fallback(app, pilot):
     assert spot is not None, "find_dirt returned None on standard city"
 
 
+async def s_music_asset(app, pilot):
+    """The bundled chiptune asset must exist, be a real Ogg/Vorbis
+    file, and live where MusicPlayer expects it."""
+    from simcity_tui.music import DEFAULT_TRACK
+    assert DEFAULT_TRACK.exists(), f"missing music asset: {DEFAULT_TRACK}"
+    with open(DEFAULT_TRACK, "rb") as f:
+        header = f.read(4)
+    # OggS magic bytes — https://xiph.org/ogg/doc/framing.html
+    assert header == b"OggS", f"not an Ogg file, got {header!r}"
+
+
+async def s_music_lifecycle(app, pilot):
+    """Start + stop on MusicPlayer must be safe regardless of whether
+    an audio player is actually available on the system."""
+    from simcity_tui.music import MusicPlayer
+    mp = MusicPlayer(enabled=True)
+    mp.start()
+    # Whether a subprocess was actually spawned depends on the host —
+    # we just need both calls to return cleanly.
+    mp.stop()
+    mp.stop()  # double-stop must be idempotent
+
+
 async def s_state_snapshot_headless(app, pilot):
     """Regression for issue #1 on GitHub: state_snapshot must not crash
     when accessed from --headless mode (no App mount context). Reading
@@ -755,6 +778,8 @@ SCENARIOS: list[Scenario] = [
              lambda a, p: _s_modal(a, p, "L", "LoadScreen")),
     Scenario("advisor_screen_does_not_crash_compositor",
              lambda a, p: _s_modal(a, p, "A", "AdvisorScreen")),
+    Scenario("music_ogg_exists_and_is_real", s_music_asset),
+    Scenario("music_player_start_stop_clean", s_music_lifecycle),
 ]
 
 

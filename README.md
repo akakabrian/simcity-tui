@@ -66,8 +66,9 @@ Takes 1–3 minutes the first time, seconds on subsequent rebuilds.
 ```
 .venv/bin/python simcity.py           # default city
 .venv/bin/python simcity.py bluebird  # a specific vendor scenario
-.venv/bin/python simcity.py --sound   # enable sound effects
-.venv/bin/python simcity.py --agent   # also start the REST agent API on :8787
+.venv/bin/python simcity.py --sound     # enable sound effects
+.venv/bin/python simcity.py --no-music  # disable background chiptune (on by default)
+.venv/bin/python simcity.py --agent     # also start the REST agent API on :8787
 .venv/bin/python simcity.py --headless  # no TUI, just sim + agent API
 ```
 
@@ -128,6 +129,8 @@ Or just `make test` to run the first three.
   open-sourced & maintained by Don Hopkins.
 - Sounds: GPLv3, vendored from
   `vendor/micropolis/micropolis-activity/res/sounds/`.
+- Background music: [Lasso Lady (seamless loop)](https://opengameart.org/content/lasso-lady-seamless-loop),
+  CC0 Public Domain. See `simcity_tui/assets/music/CREDITS.md`.
 - This TUI: GPLv3 (derivative of a GPLv3 engine).
 - API schema inspired by
   [andrewedunn/hallucinating-splines](https://github.com/andrewedunn/hallucinating-splines).

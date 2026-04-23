@@ -17,3 +17,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["simcity_tui"]
+
+# Bundle the chiptune loop + credits inside the package so
+# `pip install` delivers the game fully self-contained — no separate
+# asset-download step.
+[tool.setuptools.package-data]
+simcity_tui = ["tui.tcss", "assets/music/*.ogg", "assets/music/CREDITS.md"]
