@@ -226,6 +226,16 @@ class MapView(ScrollView):
         # Pre-parsed tint styles for the preview overlay.
         self._preview_ok = Style.parse("on rgb(40,90,40)")
         self._preview_bad = Style.parse("on rgb(90,30,30)")
+        # Brighter bg per zone family — applied to cells that sit on the
+        # perimeter of a contiguous same-family zone block. Keeps the fg
+        # density pattern intact so shading is still readable; the bg
+        # shift frames the zone so a 3×3 or a multi-zone district reads
+        # as one unit instead of a scatter of shaded cells.
+        self._zone_border_bg: dict[str, Style] = {
+            "resid": Style.parse("on rgb(30,78,42)"),
+            "comm":  Style.parse("on rgb(30,58,95)"),
+            "indus": Style.parse("on rgb(95,42,42)"),
+        }
         # Per-refresh-pass caches: the first render_line() call in a pass
         # probes the engine (ptr rebind, overlay fetch); subsequent rows
         # in the same pass reuse those values. Saves 99× FFI calls per
@@ -371,6 +381,9 @@ class MapView(ScrollView):
         H = WORLD_H
         cx, cy = self.cursor_x, self.cursor_y
         cursor_style = self._cursor_style
+        zone_family = tiles.ZONE_FAMILY
+        border_bg = self._zone_border_bg
+        W = WORLD_W
 
         # Reuse the overlay buffer fetched at the start of this pass.
         overlay = self._pass_overlay_cache
@@ -437,10 +450,25 @@ class MapView(ScrollView):
                             glyph = lm
                 if x == cx and tile_y == cy:
                     style = cursor_now
-                elif frame == 1 and klass in pulse_classes:
-                    style = self._alt_style(klass)
                 else:
-                    style = styles.get(klass, unknown)
+                    if frame == 1 and klass in pulse_classes:
+                        style = self._alt_style(klass)
+                    else:
+                        style = styles.get(klass, unknown)
+                    # Zone perimeter — if this is a zone cell and at
+                    # least one cardinal neighbour is outside the same
+                    # family (road, dirt, a different zone class, or
+                    # off-map), composite the brighter family bg so the
+                    # block's outline reads as a unified frame.
+                    family = zone_family.get(klass)
+                    if family is not None:
+                        left  = zone_family.get(table[m[(x - 1) * H + tile_y] & mask][1]) if x > 0       else None
+                        right = zone_family.get(table[m[(x + 1) * H + tile_y] & mask][1]) if x < W - 1   else None
+                        up    = zone_family.get(table[m[x * H + tile_y - 1] & mask][1])   if tile_y > 0  else None
+                        down  = zone_family.get(table[m[x * H + tile_y + 1] & mask][1])   if tile_y < H - 1 else None
+                        if (left != family or right != family
+                                or up != family or down != family):
+                            style = style + border_bg[family]
                 # Preview overlay — tint footprint cells (excluding the
                 # cursor itself, which already stands out).
                 if (prev_style is not None
