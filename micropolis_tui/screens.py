@@ -19,7 +19,7 @@ from textual.widgets import Input, Static
 from .engine import WORLD_H, WORLD_W, CITIES_DIR
 
 
-SAVE_DIR = Path.home() / ".local" / "share" / "simcity-tui" / "saves"
+SAVE_DIR = Path.home() / ".local" / "share" / "micropolis-tui" / "saves"
 
 
 # ---------- shared helpers ----------------------------------------------------
@@ -560,7 +560,7 @@ TUTORIAL_PAGES: list[tuple[str, str]] = [
      "  [bold]b[/]  Budget       tax 0–20% and road/police/fire funding\n"
      "  [bold]g[/]  Graphs       pop, funds, R/C/I over time\n"
      "  [bold]e[/]  Evaluation   city class, score, averages, public opinion\n"
-     "  [bold]s[/]  Save         current city to ~/.local/share/simcity-tui/\n"
+     "  [bold]s[/]  Save         current city to ~/.local/share/micropolis-tui/\n"
      "  [bold]l[/]  Load         any save or built-in scenario\n"
      "  [bold]?[/]  Help         full keybindings at any time\n\n"
      "Cutting service funding saves money now but raises crime, lets\n"

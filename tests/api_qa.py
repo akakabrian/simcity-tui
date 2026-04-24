@@ -10,8 +10,8 @@ import sys
 
 import aiohttp
 
-from simcity_tui.app import SimCityApp
-from simcity_tui.agent_api import start_server
+from micropolis_tui.app import SimCityApp
+from micropolis_tui.agent_api import start_server
 
 
 def _free_port() -> int:

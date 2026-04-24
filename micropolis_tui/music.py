@@ -1,6 +1,6 @@
 """Background chiptune music — fire-and-forget subprocess loop.
 
-Plays `simcity_tui/assets/music/<track>.mp3` in an infinite loop via
+Plays `micropolis_tui/assets/music/<track>.mp3` in an infinite loop via
 `paplay` / `afplay`. Same design contract as SoundBoard: silent on
 failure (no audio pipeline, no player, SSH session, etc.), explicit
 stop on app exit.

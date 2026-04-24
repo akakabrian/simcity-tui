@@ -1,4 +1,4 @@
-"""Headless QA driver for simcity-tui.
+"""Headless QA driver for micropolis-tui.
 
 Runs each scenario in a fresh `SimCityApp` via `App.run_test()`, captures an
 SVG screenshot, and reports pass/fail. Exit code is the number of failures.
@@ -16,9 +16,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Awaitable, Callable
 
-from simcity_tui.app import SimCityApp, TOOLS
-from simcity_tui.engine import WORLD_H, WORLD_W
-from simcity_tui import tiles
+from micropolis_tui.app import SimCityApp, TOOLS
+from micropolis_tui.engine import WORLD_H, WORLD_W
+from micropolis_tui import tiles
 
 OUT = Path(__file__).resolve().parent / "out"
 OUT.mkdir(exist_ok=True)
@@ -164,7 +164,7 @@ async def _s_modal(app, pilot, key: str, class_name: str) -> None:
 
 async def s_overlay_cycle(app, pilot):
     """Pressing 'o' must cycle through all overlay modes and wrap back."""
-    from simcity_tui.screens import OVERLAY_MODES
+    from micropolis_tui.screens import OVERLAY_MODES
     start = app.map_view.overlay_mode
     seen = [start]
     for _ in range(len(OVERLAY_MODES)):
@@ -305,7 +305,7 @@ async def s_log_collapse(app, pilot):
 async def s_sound_debounce(app, pilot):
     """Rapid repeated sound.play() calls must suppress all but the first."""
     import time
-    from simcity_tui.sounds import SoundBoard
+    from micropolis_tui.sounds import SoundBoard
     board = SoundBoard(enabled=True)
     if not board.enabled:  # no player on system
         return
@@ -339,7 +339,7 @@ async def s_music_asset(app, pilot):
     """The bundled chiptune asset must exist, be a real MP3, and live
     where MusicPlayer expects it. We ship MP3 (not OGG) so macOS's
     built-in afplay can decode it."""
-    from simcity_tui.music import DEFAULT_TRACK
+    from micropolis_tui.music import DEFAULT_TRACK
     assert DEFAULT_TRACK.exists(), f"missing music asset: {DEFAULT_TRACK}"
     assert DEFAULT_TRACK.suffix == ".mp3", (
         f"music must be MP3 for afplay compatibility, got {DEFAULT_TRACK.suffix}"
@@ -354,7 +354,7 @@ async def s_music_asset(app, pilot):
 async def s_music_lifecycle(app, pilot):
     """Start + stop on MusicPlayer must be safe regardless of whether
     an audio player is actually available on the system."""
-    from simcity_tui.music import MusicPlayer
+    from micropolis_tui.music import MusicPlayer
     mp = MusicPlayer(enabled=True)
     mp.start()
     # Whether a subprocess was actually spawned depends on the host —
@@ -372,8 +372,8 @@ async def s_state_snapshot_headless(app, pilot):
     Here we simulate the headless path: build a fresh SimCityApp (which
     is NOT mounted) and invoke state_snapshot on it. Must return a dict,
     not raise NoActiveAppError."""
-    from simcity_tui.app import SimCityApp
-    from simcity_tui.agent_api import state_snapshot
+    from micropolis_tui.app import SimCityApp
+    from micropolis_tui.agent_api import state_snapshot
     fresh = SimCityApp()
     s = state_snapshot(fresh)
     assert isinstance(s, dict), type(s)
@@ -397,7 +397,7 @@ async def s_advisor_no_key(app, pilot):
     user-friendly error string instead of raising. This is the
     fail-silent-with-feedback contract."""
     import os
-    from simcity_tui import advisor
+    from micropolis_tui import advisor
     saved = os.environ.pop("ANTHROPIC_API_KEY", None)
     try:
         # Also verify the cheap probe.
@@ -540,7 +540,7 @@ async def s_road_glyphs(app, pilot):
     table. A few pivotal IDs — 66 is a plain horizontal, 68 is a south+west
     elbow (╮), 76 is the 4-way intersection — and traffic-bearing tiles at
     +80 and +144 must carry the SAME glyph (only the style differs)."""
-    from simcity_tui import tiles
+    from micropolis_tui import tiles
     t = tiles._TABLE
     assert t[66][0] == "─", f"ROADS (66) glyph = {t[66][0]!r}"
     assert t[67][0] == "│", f"ROADS2 (67) glyph = {t[67][0]!r}"
@@ -590,7 +590,7 @@ async def s_sound_enabled_synthesises(app, pilot):
     """With sound on, the SoundBoard must pick a player if any is available
     and successfully synth a wave. We don't actually play it (no assertions
     about hearing) — just verify the synthesis path."""
-    from simcity_tui.sounds import SoundBoard
+    from micropolis_tui.sounds import SoundBoard
     board = SoundBoard(enabled=True)
     if board._player is None:
         # No audio player on this machine — graceful degrade is the contract.

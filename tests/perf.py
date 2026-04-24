@@ -9,8 +9,8 @@ import asyncio
 import statistics
 import time
 
-from simcity_tui.app import SimCityApp
-from simcity_tui.engine import WORLD_H, WORLD_W
+from micropolis_tui.app import SimCityApp
+from micropolis_tui.engine import WORLD_H, WORLD_W
 
 
 def timed(label: str, fn, iterations: int = 50) -> float:

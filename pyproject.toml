@@ -1,5 +1,5 @@
 [project]
-name = "simcity-tui"
+name = "micropolis-tui"
 version = "0.1.0"
 description = "Terminal-native SimCity (Micropolis) front-end"
 requires-python = ">=3.10"
@@ -16,10 +16,10 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["simcity_tui"]
+packages = ["micropolis_tui"]
 
 # Bundle the chiptune loop + credits inside the package so
 # `pip install` delivers the game fully self-contained — no separate
 # asset-download step.
 [tool.setuptools.package-data]
-simcity_tui = ["tui.tcss", "assets/music/*.mp3", "assets/music/CREDITS.md"]
+micropolis_tui = ["tui.tcss", "assets/music/*.mp3", "assets/music/CREDITS.md"]

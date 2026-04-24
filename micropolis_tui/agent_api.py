@@ -82,7 +82,7 @@ def build_app(game_app) -> web.Application:
     @routes.get("/")
     async def root(request):
         return web.json_response({
-            "name": "simcity-tui agent API",
+            "name": "micropolis-tui agent API",
             "endpoints": [
                 "GET /state", "GET /tools", "GET /map", "GET /tile",
                 "GET /overlays/<name>", "GET /history", "GET /events",

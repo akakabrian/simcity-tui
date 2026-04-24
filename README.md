@@ -1,4 +1,4 @@
-# simcity-tui
+# micropolis-tui
 
 Terminal-native [SimCity / Micropolis](https://github.com/SimHacker/micropolis),
 with a mouse-and-keyboard TUI (Textual), a REST API for AI agents, and
@@ -52,8 +52,8 @@ xcode-select --install
 ## First-time setup
 
 ```
-git clone https://github.com/<you>/simcity-tui.git
-cd simcity-tui
+git clone https://github.com/<you>/micropolis-tui.git
+cd micropolis-tui
 make all
 ```
 
@@ -112,7 +112,7 @@ When launched with `--agent` (or `--headless`), a REST server runs on
 | `POST /overlay`            | `{mode: "pollution" \| … \| "off"}` |
 | `POST /tax`                | `{rate: 0..20}` |
 
-See `simcity_tui/agent_api.py`. The schema is loosely modelled on
+See `micropolis_tui/agent_api.py`. The schema is loosely modelled on
 [hallucinating-splines](https://github.com/andrewedunn/hallucinating-splines).
 
 ## Tests
@@ -134,7 +134,7 @@ Or just `make test` to run the first three.
 - Sounds: GPLv3, vendored from
   `vendor/micropolis/micropolis-activity/res/sounds/`.
 - Background music: [Lasso Lady (seamless loop)](https://opengameart.org/content/lasso-lady-seamless-loop),
-  CC0 Public Domain. See `simcity_tui/assets/music/CREDITS.md`.
+  CC0 Public Domain. See `micropolis_tui/assets/music/CREDITS.md`.
 - This TUI: GPLv3 (derivative of a GPLv3 engine).
 - API schema inspired by
   [andrewedunn/hallucinating-splines](https://github.com/andrewedunn/hallucinating-splines).

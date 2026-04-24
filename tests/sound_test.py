@@ -14,14 +14,14 @@ import sys
 import time
 from pathlib import Path
 
-from simcity_tui.sounds import (
+from micropolis_tui.sounds import (
     _VENDOR_SFX_DIR, _VENDOR_SOUNDS, SoundBoard, _detect_player,
 )
 
 
 def main() -> int:
     print("=" * 60)
-    print(" simcity-tui sound diagnostic")
+    print(" micropolis-tui sound diagnostic")
     print("=" * 60)
     print(f" platform      : {platform.system()} {platform.release()}")
     print(f" python        : {sys.version.split()[0]}")

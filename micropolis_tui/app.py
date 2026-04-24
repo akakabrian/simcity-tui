@@ -1293,7 +1293,7 @@ def run(city: str = "haight", *, agent_port: int | None = None,
 
         async def _headless_main() -> None:
             runner = await start_server(app, port=agent_port)
-            print(f"[simcity-tui] headless, agent API on "
+            print(f"[micropolis-tui] headless, agent API on "
                   f"http://127.0.0.1:{agent_port}")
             try:
                 while True:

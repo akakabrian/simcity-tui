@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import argparse
 
-from simcity_tui.app import run
+from micropolis_tui.app import run
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(prog="simcity-tui")
+    p = argparse.ArgumentParser(prog="micropolis-tui")
     p.add_argument("city", nargs="?", default="haight",
                    help="city save name under vendor/.../cities/ (default: haight)")
     p.add_argument("--agent", action="store_true",
